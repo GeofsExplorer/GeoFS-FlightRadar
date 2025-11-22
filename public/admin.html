@@ -3,157 +3,265 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JetPhotos Admin Panel</title>
+  <title>JetPhotos Upload Center</title>
   <style>
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --text-primary: #e6edf3;
+      --accent: #58a6ff;
+      --success: #238636;
+      --success-hover: #2ea043;
+      --border-radius: 10px;
+      --shadow: 0 0 10px rgba(0,0,0,0.4);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
     body {
       font-family: "Segoe UI", sans-serif;
-      background: #0d1117;
-      color: #e6edf3;
+      background: var(--bg-primary);
+      color: var(--text-primary);
       margin: 0;
       padding: 20px;
-    }
-    h1 {
-      color: #58a6ff;
-    }
-    #login {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    h1 {
+      color: var(--accent);
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 2rem;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #8b949e;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+    
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 500px;
+      height: 550px;
+      background: var(--bg-secondary);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      overflow: auto;
+      min-width: 400px;
+      min-height: 500px;
+      max-width: 800px;
+      max-height: 900px;
+      resize: both;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    label {
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    
+    input, textarea {
+      border-radius: 6px;
+      border: 1px solid #30363d;
+      padding: 10px;
+      font-size: 15px;
+      width: 100%;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: var(--transition);
+    }
+    
+    textarea {
+      resize: none;
+      flex-grow: 1;
+      min-height: 80px;
+    }
+    
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+    }
+    
+    input[type=file] {
+      background: transparent;
+      padding: 8px 0;
+      border: none;
+    }
+    
+    .coordinates {
+      display: flex;
       gap: 10px;
     }
-    input, button {
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: none;
-      font-size: 15px;
+    
+    .coordinates input {
+      flex: 1;
     }
+    
     button {
-      cursor: pointer;
-      background: #238636;
+      background: var(--success);
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
       color: white;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 10px;
     }
-    button.reject {
-      background: #da3633;
+    
+    button:hover {
+      background: var(--success-hover);
+      transform: translateY(-2px);
     }
-    #photos {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
+    
+    #msg {
       margin-top: 20px;
-    }
-    .photo-card {
-      background: #161b22;
-      border-radius: 10px;
-      overflow: hidden;
-      width: 220px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-      display: flex;
-      flex-direction: column;
-    }
-    .photo-card img {
+      font-weight: bold;
+      text-align: center;
+      padding: 12px;
+      border-radius: var(--border-radius);
       width: 100%;
-      height: 150px;
-      object-fit: cover;
+      transition: var(--transition);
     }
-    .photo-card .info {
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
+    
+    .success {
+      background: rgba(35, 134, 54, 0.2);
+      color: #3fb950;
     }
-    .actions {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
+    
+    .error {
+      background: rgba(248, 81, 73, 0.2);
+      color: #f85149;
+    }
+    
+    .info {
+      background: rgba(88, 166, 255, 0.2);
+      color: var(--accent);
+    }
+    
+    @media (max-width: 600px) {
+      body {
+        padding: 15px;
+      }
+      
+      .container {
+        max-width: 100%;
+      }
+      
+      form {
+        padding: 20px;
+        min-width: unset;
+        resize: none;
+        width: 100%;
+        height: auto;
+      }
+      
+      h1 {
+        font-size: 1.7rem;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>JetPhotos Review Panel</h1>
-  <div id="login">
-    <p>Please enter admin password:</p>
-    <input id="pass" type="password" placeholder="Admin password">
-    <button onclick="login()">Login</button>
-  </div>
+  <div class="container">
+    <h1>📸 JetPhotos Upload Center</h1>
+    <p class="subtitle">Share your aviation photography with the world</p>
+    
+    <form id="uploadForm">
+      <div class="form-group">
+        <label for="photo">Select Photo:</label>
+        <input type="file" id="photo" name="photo" accept="image/*" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="photographer">Photographer Name:</label>
+        <input type="text" id="photographer" name="photographer" placeholder="Your name (optional)">
+      </div>
+      
+      <div class="form-group" style="flex-grow: 1;">
+        <label for="caption">Description:</label>
+        <textarea id="caption" name="caption" placeholder="e.g., EVA Air A321 taking off RCSS"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="tags">Tags (comma separated):</label>
+        <input type="text" id="tags" name="tags" placeholder="A321,EVA Air,RCSS">
+      </div>
+      
+      <div class="form-group">
+        <label>Coordinates (optional):</label>
+        <div class="coordinates">
+          <input type="number" step="any" name="lat" placeholder="Latitude">
+          <input type="number" step="any" name="lon" placeholder="Longitude">
+        </div>
+      </div>
 
-  <div id="panel" style="display:none;">
-    <h2>Pending Photos</h2>
-    <div id="photos"></div>
+      <button type="submit">Upload Photo</button>
+    </form>
+
+    <div id="msg"></div>
   </div>
 
   <script>
-    async function deletePhoto(id) {
-  if (!confirm('確定要永久刪除？')) return;
-  await fetch(`/admin/photos/${id}`, {
-    method: 'DELETE',
-    headers: { 'x-admin-pass': adminPass }
-  });
-  loadPending();
-}
-    let adminPass = '';
-    async function login() {
-      adminPass = document.getElementById('pass').value.trim();
-      if (!adminPass) return alert('Please enter password');
-      document.getElementById('login').style.display = 'none';
-      document.getElementById('panel').style.display = 'block';
-      loadPending();
-    }
+    const form = document.getElementById('uploadForm');
+    const msg = document.getElementById('msg');
 
-    async function loadPending() {
-      const res = await fetch('/admin/photos/pending', {
-        headers: { 'x-admin-pass': adminPass }
-      });
-      if (!res.ok) {
-        alert('Incorrect password or server error');
-        location.reload();
-        return;
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      msg.textContent = '⏳ Uploading...';
+      msg.className = 'info';
+      
+      const fd = new FormData(form);
+
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: fd
+        });
+        const data = await res.json();
+        if (res.ok) {
+          msg.textContent = '✅ Upload successful! Your photo will be displayed after admin approval.';
+          msg.className = 'success';
+          form.reset();
+        } else {
+          msg.textContent = '❌ Upload failed: ' + (data.error || res.statusText);
+          msg.className = 'error';
+        }
+      } catch (err) {
+        console.error(err);
+        msg.textContent = '⚠️ An error occurred, please try again later.';
+        msg.className = 'error';
       }
-      const photos = await res.json();
-      const box = document.getElementById('photos');
-      box.innerHTML = '';
-      if (photos.length === 0) {
-        box.innerHTML = '<p>No pending photos at the moment 🎉</p>';
-        return;
-      }
-      photos.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'photo-card';
-        div.innerHTML = `
-  <img src="${p.thumb}" alt="" onclick="window.open('${p.file}', '_blank')" title="點擊查看原圖" style="cursor:pointer;">
-  <div class="info">
-    <strong>${p.caption || '(No description)'}</strong>
-    <small>by ${p.photographer || 'Anonymous'}</small>
-    ${p.tags && p.tags.length > 0 ? `
-      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;">
-        ${p.tags.map(tag => `<span style="background:rgba(88,166,255,0.15);color:#58a6ff;padding:2px 8px;border-radius:10px;font-size:11px;">${tag}</span>`).join('')}
-      </div>
-    ` : ''}
-  </div>
-  <div class="actions">
-    <button onclick="approve('${p._id}')">✓ Approve</button>
-    <button class="reject" onclick="reject('${p._id}')">✗ Reject</button>
-    <button style="background:#8B0000;" onclick="deletePhoto('${p._id}')">🗑 Delete</button>
-  </div>
-`;
-        box.appendChild(div);
-      });
-    }
-
-    async function approve(id) {
-      await fetch(`/admin/photos/${id}/approve`, {
-        method: 'POST',
-        headers: { 'x-admin-pass': adminPass }
-      });
-      loadPending();
-    }
-
-    async function reject(id) {
-      await fetch(`/admin/photos/${id}/reject`, {
-        method: 'POST',
-        headers: { 'x-admin-pass': adminPass }
-      });
-      loadPending();
-    }
+    });
   </script>
 </body>
 </html>
